@@ -254,7 +254,7 @@
     AC_CHECK_DECL([getrandom],
         AC_DEFINE([HAVE_GETRANDOM], [1], [Use getrandom]),
         [], [
-            #include <sys/random.h> 
+            #include <sys/random.h>
             ])
 
     OCFLAGS=$CFLAGS
@@ -467,7 +467,7 @@
     ])
     AM_CONDITIONAL([BUILD_UNITTESTS], [test "x$enable_unittests" = "xyes"])
 
-  # enable the building of ebpf files 
+  # enable the building of ebpf files
     AC_ARG_ENABLE(ebpf-build,
            AS_HELP_STRING([--enable-ebpf-build], [Enable compilation of ebpf files]),[enable_ebpf_build=$enableval],[enable_ebpf_build=no])
     AM_CONDITIONAL([BUILD_EBPF], [test "x$enable_ebpf_build" = "xyes"])
@@ -1087,7 +1087,7 @@
     AC_ARG_ENABLE(windivert,
         AS_HELP_STRING([--enable-windivert],[Enable WinDivert support [default=no]]),[enable_windivert=$enableval],
         [enable_windivert="no"])
-    
+
   # WinDivert can only be enabled on Windows builds
     AC_CHECK_DECL([OS_WIN32],,[enable_windivert="no"])
 
@@ -1435,6 +1435,26 @@
             AC_DEFINE([HAVE_HW_TIMESTAMPING],[1],[Hardware timestamping support is available]),
             [],
             [[#include <linux/net_tstamp.h>]])
+    ])
+
+  # Testimony support
+    AC_ARG_ENABLE(testimony,
+           AS_HELP_STRING([--enable-testimony], [Enable Testimony (unix socket) support [default=yes]]),
+                        [enable_testimony=$enableval],[enable_testimony=yes])
+    AS_IF([test "x$enable_testimony" = "xyes"], [
+        AC_CHECK_HEADER(testimony.h,,[AC_MSG_ERROR(testimony.h not found ...)],)
+        AC_CHECK_LIB(testimony, testimony_connect,, TESTIMONY="no")
+
+        if test "$TESTIMONY" = "no"; then
+            echo
+            echo "   ERROR! libtestimony library not found"
+            echo
+            exit 1
+        fi
+
+        AC_DEFINE([HAVE_TESTIMONY],[1],[Testimony support is available])
+
+        LIBS="${LIBS} -ltestimony"
     ])
 
   # Netmap support
