@@ -88,6 +88,8 @@
 #include "source-pcap.h"
 #include "source-pcap-file.h"
 
+#include "source-testimony.h"
+
 #include "source-pfring.h"
 
 #include "source-erf-file.h"
@@ -1455,6 +1457,7 @@ static TmEcode ParseCommandLine(int argc, char** argv, SCInstance *suri)
         {"pfring-cluster-type", required_argument, 0, 0},
         {"af-packet", optional_argument, 0, 0},
         {"netmap", optional_argument, 0, 0},
+        {"testimony", optional_argument, 0, 0},
         {"pcap", optional_argument, 0, 0},
         {"pcap-file-continuous", 0, 0, 0},
         {"pcap-file-delete", 0, 0, 0},
