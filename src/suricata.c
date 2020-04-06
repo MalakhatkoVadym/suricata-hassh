@@ -868,6 +868,13 @@ void RegisterAllModules(void)
     /* pcap live */
     TmModuleReceivePcapRegister();
     TmModuleDecodePcapRegister();
+
+    /* testimony */
+#ifdef HAVE_TESTIMONY
+    TmModuleReceiveTestimonyRegister();
+    TmModuleDecodeTestimonyRegister();
+#endif
+
     /* pcap file */
     TmModuleReceivePcapFileRegister();
     TmModuleDecodePcapFileRegister();
@@ -1645,6 +1652,14 @@ static TmEcode ParseCommandLine(int argc, char** argv, SCInstance *suri)
                     fprintf(stderr, "ERROR: Failed to set engine init-failure-fatal.\n");
                     return TM_ECODE_FAILED;
                 }
+#ifdef HAVE_AF_PACKET
+            } else if(strcmp((long_opts[option_index]).name, "testimony") == 0) {
+                if (optarg && ConfSetFinal("testimony.socket-path", optarg) == 0) {
+                    fprintf(stderr, "ERROR: Failed to set testimony socket path.\n");
+                    return TM_ECODE_FAILED;
+                }
+                suri->run_mode = RUNMODE_TESTIMONY;
+#endif
 #ifdef BUILD_UNIX_SOCKET
             } else if (strcmp((long_opts[option_index]).name , "unix-socket") == 0) {
                 if (suri->run_mode == RUNMODE_UNKNOWN) {
